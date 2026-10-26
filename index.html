@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You ❤️</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #fff5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 75, 110, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .scene-image {
+            width: 100%;
+            max-height: 250px;
+            object-fit: contain;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #4a4a4a;
+            font-size: 22px;
+            margin-bottom: 25px;
+            line-height: 1.4;
+            min-height: 60px;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            min-height: 60px;
+            align-items: center;
+        }
+        button {
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+        #yesBtn {
+            background-color: #ff4b6e;
+            color: white;
+        }
+        #noBtn {
+            background-color: #e0e0e0;
+            color: #666;
+            position: relative;
+            z-index: 10;
+        }
+        .rose-icon {
+            font-size: 80px;
+            animation: grow 1s ease forwards;
+        }
+        @keyframes grow {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Audio Element for "Tu Chahiye" -->
+    <!-- Replace the src URL with your own uploaded audio link if needed -->
+    <audio id="bgMusic" src="https://soundhelix.com" loop></audio>
+
+    <div class="container">
+        <!-- Image display -->
+        <img id="displayImg" class="scene-image" src="https://unsplash.com" alt="Proposal Scene">
+        
+        <!-- Text Question -->
+        <h2 id="questionText">Do you love me?</h2>
+        
+        <!-- Interactive Controls -->
+        <div class="btn-container" id="buttonArea">
+            <button id="yesBtn" onclick="handleYes()">Yes</button>
+            <button id="noBtn" onclick="handleNo()">No</button>
+        </div>
+    </div>
+
+    <script>
+        let clickCount = 0;
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const questionText = document.getElementById('questionText');
+        const displayImg = document.getElementById('displayImg');
+        const bgMusic = document.getElementById('bgMusic');
+        const buttonArea = document.getElementById('buttonArea');
+
+        // Mouseover/Touch event to make the No button run away
+        noBtn.addEventListener('mouseenter', moveNoButton);
+        noBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            moveNoButton();
+        });
+
+        function moveNoButton() {
+            if (clickCount >= 2) {
+                // Get container dimensions to keep the button inside it safely
+                const container = document.querySelector('.container');
+                const containerRect = container.getBoundingClientRect();
+                const btnRect = noBtn.getBoundingClientRect();
+
+                // Calculate random positions within the container card boundaries
+                const maxX = containerRect.width - btnRect.width - 40;
+                const maxY = containerRect.height - btnRect.height - 40;
+
+                const randomX = Math.floor(Math.random() * maxX) - (maxX / 2);
+                const randomY = Math.floor(Math.random() * maxY) - (maxY / 2);
+
+                noBtn.style.position = 'absolute';
+                noBtn.style.left = `calc(50% + ${randomX}px - ${btnRect.width/2}px)`;
+                noBtn.style.top = `calc(50% + ${randomY}px - ${btnRect.height/2}px)`;
+            }
+        }
+
+        function handleNo() {
+            clickCount++;
+
+            if (clickCount === 1) {
+                // Screen 2: Cute Crying Cat
+                displayImg.src = "https://unsplash.com"; // Placeholder image for cute cat look
+                questionText.innerText = "Please, did you love me? 🥺";
+            } 
+            else if (clickCount === 2) {
+                // Screen 3: "Soch lo..." and triggers Atif Aslam Song
+                questionText.innerText = "Soch lo, last baar please did you love me? 🎵";
+                
+                // Play music safely
+                bgMusic.play().catch(error => {
+                    console.log("Audio playback waiting for user gesture confirmation.");
+                });
+            }
+        }
+
+        function handleYes() {
+            // Final Screen: Shows the Rose and custom love declaration text
+            displayImg.removeAttribute('src'); 
+            displayImg.style.display = 'none';
+            
+            // Replaces content with your exact text and custom layout
+            buttonArea.innerHTML = '';
+            questionText.innerHTML = "<div class='rose-icon'>🌹</div><br>I was knowing that you will love me.";
+            
+            // Ensure audio plays if it hasn't yet triggered
+            bgMusic.play().catch(() => {});
+        }
+    </script>
+</body>
+</html>
