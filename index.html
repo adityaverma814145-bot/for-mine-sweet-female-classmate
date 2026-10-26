@@ -23,19 +23,25 @@
             background: white;
             padding: 30px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(255, 75, 110, 0.1);
+            box-shadow: 0 10px 30px rgba(255, 75, 110, 0.15);
             text-align: center;
             max-width: 400px;
             width: 90%;
             position: relative;
-            transition: all 0.3s ease;
         }
-        .scene-image {
+        .media-box {
             width: 100%;
-            max-height: 250px;
+            height: 220px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .media-box img, .media-box svg {
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
             border-radius: 12px;
-            margin-bottom: 20px;
         }
         h2 {
             color: #4a4a4a;
@@ -53,13 +59,12 @@
             align-items: center;
         }
         button {
-            padding: 12px 30px;
+            padding: 12px 35px;
             font-size: 16px;
             font-weight: bold;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.1s ease;
         }
         #yesBtn {
             background-color: #ff4b6e;
@@ -68,63 +73,78 @@
         #noBtn {
             background-color: #e0e0e0;
             color: #666;
+            transition: all 0.1s ease;
             position: relative;
-            z-index: 10;
-        }
-        .rose-icon {
-            font-size: 80px;
-            animation: grow 1s ease forwards;
-        }
-        @keyframes grow {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
+            z-index: 999;
         }
     </style>
 </head>
 <body>
 
-    <!-- Audio Element for "Tu Chahiye" -->
-    <!-- Replace the src URL with your own uploaded audio link if needed -->
-    <audio id="bgMusic" src="https://soundhelix.com" loop></audio>
+    <!-- Tu Chahiye - Atif Aslam (Direct Stream Link) -->
+    <audio id="bgMusic" loop>
+        <source src="https://r2.dev" type="audio/mpeg">
+    </audio>
 
     <div class="container">
-        <!-- Image display -->
-        <img id="displayImg" class="scene-image" src="https://unsplash.com" alt="Proposal Scene">
+        <div class="media-box" id="mediaBox">
+            <!-- Ghibli Style Proposal Art (SVG Vector) -->
+            <svg viewBox="0 0 100 100" width="150" height="150">
+                <circle cx="50" cy="45" r="15" fill="#ffd1dc"/>
+                <path d="M40 70 C 40 55, 60 55, 60 70 Z" fill="#4a69bd"/>
+                <circle cx="65" cy="50" r="12" fill="#ffe0bd"/>
+                <path d="M55 75 C 55 62, 75 62, 75 75 Z" fill="#ff6b81"/>
+                <path d="M38 70 L48 65 L44 60 Z" fill="#4a69bd"/>
+                <path d="M12,50 A15,15 0 0,1 42,50 A15,15 0 0,1 72,50 Q72,75 42,95 Q12,75 12,50 Z" fill="#ff4757" opacity="0.3"/>
+            </svg>
+        </div>
         
-        <!-- Text Question -->
         <h2 id="questionText">Do you love me?</h2>
         
-        <!-- Interactive Controls -->
         <div class="btn-container" id="buttonArea">
             <button id="yesBtn" onclick="handleYes()">Yes</button>
-            <button id="noBtn" onclick="handleNo()">No</button>
+            <button id="noBtn" onclick="handleClickNo()">No</button>
         </div>
     </div>
 
     <script>
-        let clickCount = 0;
+        let attempt = 1;
         const noBtn = document.getElementById('noBtn');
-        const yesBtn = document.getElementById('yesBtn');
         const questionText = document.getElementById('questionText');
-        const displayImg = document.getElementById('displayImg');
+        const mediaBox = document.getElementById('mediaBox');
         const bgMusic = document.getElementById('bgMusic');
-        const buttonArea = document.getElementById('buttonArea');
+        const container = document.querySelector('.container');
 
-        // Mouseover/Touch event to make the No button run away
+        // Target elusive actions for the 4th step onwards
         noBtn.addEventListener('mouseenter', moveNoButton);
         noBtn.addEventListener('touchstart', function(e) {
             e.preventDefault();
             moveNoButton();
         });
 
+        function handleClickNo() {
+            if (attempt === 1) {
+                // Attempt 2: Cute Crying Cat GIF + Dynamic Question Text
+                mediaBox.innerHTML = `<img src="https://giphy.com" alt="Crying Cat">`;
+                questionText.innerText = "Please, do you love me? Sach bolo na. Please. 🥺";
+                
+                // Play Atif Aslam - Tu Chahiye immediately on 2nd screen
+                bgMusic.play().catch(err => console.log("Audio waiting for interaction fallback."));
+                attempt = 2;
+            } 
+            else if (attempt === 2) {
+                // Attempt 3: Final warning phrase before evasive actions activate
+                questionText.innerText = "Soch lo, last baar please did you love me? 🎵";
+                attempt = 3;
+            }
+        }
+
         function moveNoButton() {
-            if (clickCount >= 2) {
-                // Get container dimensions to keep the button inside it safely
-                const container = document.querySelector('.container');
+            // Activating running button mechanics from the 4th step onwards
+            if (attempt >= 3) {
                 const containerRect = container.getBoundingClientRect();
                 const btnRect = noBtn.getBoundingClientRect();
 
-                // Calculate random positions within the container card boundaries
                 const maxX = containerRect.width - btnRect.width - 40;
                 const maxY = containerRect.height - btnRect.height - 40;
 
@@ -137,35 +157,19 @@
             }
         }
 
-        function handleNo() {
-            clickCount++;
-
-            if (clickCount === 1) {
-                // Screen 2: Cute Crying Cat
-                displayImg.src = "https://unsplash.com"; // Placeholder image for cute cat look
-                questionText.innerText = "Please, did you love me? 🥺";
-            } 
-            else if (clickCount === 2) {
-                // Screen 3: "Soch lo..." and triggers Atif Aslam Song
-                questionText.innerText = "Soch lo, last baar please did you love me? 🎵";
-                
-                // Play music safely
-                bgMusic.play().catch(error => {
-                    console.log("Audio playback waiting for user gesture confirmation.");
-                });
-            }
-        }
-
         function handleYes() {
-            // Final Screen: Shows the Rose and custom love declaration text
-            displayImg.removeAttribute('src'); 
-            displayImg.style.display = 'none';
+            // Final Step Screen layout rendering
+            document.getElementById('buttonArea').innerHTML = '';
+            mediaBox.innerHTML = `
+                <svg viewBox="0 0 100 100" width="120" height="120">
+                    <path d="M50 80 C50 80 20 50 20 35 C20 20 35 15 50 30 C65 15 80 20 80 35 C80 50 50 80 50 80 Z" fill="#ff4b6e"/>
+                    <path d="M50 75 L50 95" stroke="#2ed573" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M50 85 Q35 80 30 85" fill="none" stroke="#2ed573" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+            `;
+            questionText.innerHTML = "I was knowing that you love me. 🌹✨";
             
-            // Replaces content with your exact text and custom layout
-            buttonArea.innerHTML = '';
-            questionText.innerHTML = "<div class='rose-icon'>🌹</div><br>I was knowing that you will love me.";
-            
-            // Ensure audio plays if it hasn't yet triggered
+            // Re-confirm audio safety stream playback
             bgMusic.play().catch(() => {});
         }
     </script>
